@@ -1,11 +1,11 @@
 import { Service } from 'egg';
-import { uploadsPath } from '../utils/allPath';
-import { listDir, obsoleteFile, delFiles } from '../utils/fsFunc';
+import { listDir, obsoleteFile, delFiles } from '../utils/fseFunc';
 export default class TemporaryFile extends Service {
-  async obsolete() {
-    const files = await listDir(uploadsPath);
-    if (files.length > 0) {
-      delFiles(obsoleteFile(files));
-    }
-  }
+	obsoleteFile = obsoleteFile;
+	async obsolete() {
+		const files = await listDir(this.config.uploadsPath);
+		if (files.length > 0) {
+			delFiles(this.obsoleteFile(files));
+		}
+	}
 }

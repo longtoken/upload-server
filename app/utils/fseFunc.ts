@@ -1,7 +1,7 @@
 import { stat, statSync, readdir, Stats, createReadStream, unlinkSync, WriteStream } from 'fs-extra';
 import * as path from 'path';
-import { uploadsPath } from '../utils/allPath';
-import { THIRTY_DAY } from '../utils/common';
+import { Service } from 'egg';
+
 export interface CusError {
   isException: boolean;
 }
@@ -33,13 +33,13 @@ export function listDir(path: string): Promise<string[]> {
   });
 }
 
-export function obsoleteFile(files: string[]) {
+export function obsoleteFile(this: Service, files: string[]) {
   const timeNow = Date.now();
   return files.map(filePath => {
-    const staticPath = path.resolve(uploadsPath, filePath);
+    const staticPath = path.resolve(this.config.uploadsPath, filePath);
     return { file: statSync(staticPath), pathName: staticPath };
   }).filter(val => {
-    return timeNow - val.file['birthtimeMs'] > THIRTY_DAY;
+    return timeNow - val.file['birthtimeMs'] > this.config.TIMEOUT_MS;
   }).map(item => {
     return item.pathName;
   });

@@ -1,5 +1,7 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
 
+import { resolve } from 'path';
+
 export default (appInfo: EggAppInfo) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
@@ -10,13 +12,17 @@ export default (appInfo: EggAppInfo) => {
   // add your egg config in here
   // config.middleware = [];
 
+  // custom
+  config.TIMEOUT_MS = 2592000000;//30天
+  config.uploadsPath = resolve(__dirname, '../app/public/uploads');
+
   // cors
   config.security = {
     csrf: {
       enable: false,
       ignoreJSON: true,
     },
-    domainWhiteList: [ 'http://localhost:3000' ], // 不能有多余的下划线
+    domainWhiteList: ['http://localhost:3000'], // 不能有多余的下划线
   };
 
   config.cors = {

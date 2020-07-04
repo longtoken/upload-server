@@ -12,7 +12,7 @@ describe('test/app/service/Temporary.test.js', () => {
   it('TemporaryFile', async () => {
     // const result = await ctx.service.temporaryFile.obsolete();
     assert.equal('1', 1);
-    console.log(ctx);
+    console.log(ctx.body);
   });
 
 

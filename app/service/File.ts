@@ -1,6 +1,5 @@
 import { Service } from 'egg';
-import { uploadsPath } from '../utils/allPath';
-import { fileStat, listDir, CusError, pipeStream } from '../utils/fsFunc';
+import { fileStat, listDir, CusError, pipeStream } from '../utils/fseFunc';
 import { IncomingForm } from 'formidable';
 import { resolve, join } from 'path';
 import { existsSync, mkdirs, move, Stats, readdir, createWriteStream, rmdirSync } from 'fs-extra';
@@ -16,7 +15,7 @@ interface FileStatus {
 export default class File extends Service {
   getFileInfo(hash: string, suffix: string) {
     const fileStatus: FileStatus = { isFileExist: false, name: hash };
-    const checkFilePath = join(uploadsPath, `${hash}${suffix}`);
+    const checkFilePath = join(this.config.uploadsPath, `${hash}${suffix}`);
     if (existsSync(checkFilePath)) {
       fileStatus.isFileExist = true;
     } else {
@@ -26,7 +25,7 @@ export default class File extends Service {
   }
   async getFileList(hash: string) {
     let result: string[] = [];
-    const checkFolderPath = join(uploadsPath, hash);
+    const checkFolderPath = join(this.config.uploadsPath, hash);
     const fileStatInfo = await fileStat(checkFolderPath);
     if (!(fileStatInfo as CusError).isException) {
       if ((fileStatInfo as Stats).isDirectory()) {
@@ -42,7 +41,7 @@ export default class File extends Service {
         if (err) return err;
         const md5AndFileNo = fields.md5AndFileNo;
         const fileHash = fields.fileHash;
-        const chunkFolder = resolve(uploadsPath, fileHash as string);
+        const chunkFolder = resolve(this.config.uploadsPath, fileHash as string);
         if (!existsSync(chunkFolder)) {
           await mkdirs(chunkFolder);
         }
@@ -53,7 +52,7 @@ export default class File extends Service {
   }
 
   async handleMerge(hash: string, fileName: string) {
-    const chunkDir = resolve(uploadsPath, hash);
+    const chunkDir = resolve(this.config.uploadsPath, hash);
     const chunkPaths = await readdir(chunkDir);
     const suffix = this.ctx.helper.getSuffix(fileName);
     const writeFile = `${chunkDir}${suffix}`;
