@@ -9,8 +9,8 @@ const plugin: EggPlugin = {
 
   cors: {
     enable: true,
-    package: 'egg-cors'
-  }
+    package: 'egg-cors',
+  },
 };
 
 export default plugin;

@@ -6,10 +6,10 @@ export interface CusError {
   isException: boolean;
 }
 export function fileStat(filePath: string): Promise<Stats | CusError> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     stat(filePath, (err, stats) => {
       // 文件不存在
-      if (err && err.code === "ENOENT") {
+      if (err && err.code === 'ENOENT') {
         resolve({ isException: true });
       } else {
         resolve(stats);
@@ -34,11 +34,11 @@ export function listDir(path: string): Promise<string[]> {
 }
 
 export function obsoleteFile(files: string[]) {
-  let timeNow = Date.now();
+  const timeNow = Date.now();
   return files.map(filePath => {
-    let staticPath = path.resolve(uploadsPath, filePath);
+    const staticPath = path.resolve(uploadsPath, filePath);
     return { file: statSync(staticPath), pathName: staticPath };
-  }).filter((val) => {
+  }).filter(val => {
     return timeNow - val.file['birthtimeMs'] > THIRTY_DAY;
   }).map(item => {
     return item.pathName;

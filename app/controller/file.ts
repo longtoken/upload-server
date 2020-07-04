@@ -16,13 +16,13 @@ export default class FileController extends Controller {
   public async list() {
     const { ctx } = this;
     const { fileName, fileMd5Val }: QueryParams = ctx.query;
-    let fileSuffix: string = ctx.helper.getSuffix(fileName);
-    let fileInfo = ctx.service.file.getFileInfo(fileMd5Val, fileSuffix);
-    let checkResponse: CheckRes = { hash: fileMd5Val };
+    const fileSuffix: string = ctx.helper.getSuffix(fileName);
+    const fileInfo = ctx.service.file.getFileInfo(fileMd5Val, fileSuffix);
+    const checkResponse: CheckRes = { hash: fileMd5Val };
     if (fileInfo.isFileExist) {
       checkResponse.fileExist = true;
     } else {
-      let fileList = await ctx.service.file.getFileList(fileMd5Val);
+      const fileList = await ctx.service.file.getFileList(fileMd5Val);
       checkResponse.chunkList = fileList;
       checkResponse.fileExist = false;
     }
@@ -30,7 +30,7 @@ export default class FileController extends Controller {
   }
   async upload() {
     const { ctx } = this;
-    let uploadRes = await this.service.file.handleUpload(ctx.req);
+    const uploadRes = await this.service.file.handleUpload(ctx.req);
     ctx.body = uploadRes;
   }
   async merge() {

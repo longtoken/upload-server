@@ -14,15 +14,15 @@ export default (appInfo: EggAppInfo) => {
   config.security = {
     csrf: {
       enable: false,
-      ignoreJSON: true
+      ignoreJSON: true,
     },
-    domainWhiteList: ['http://localhost:3000']//不能有多余的下划线
+    domainWhiteList: [ 'http://localhost:3000' ], // 不能有多余的下划线
   };
 
   config.cors = {
     origin: 'http://localhost:3000',
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
-    credentials: true
+    credentials: true,
   };
 
   // add your special config in here
