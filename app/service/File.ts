@@ -57,12 +57,15 @@ export default class File extends Service {
     const suffix = this.ctx.helper.getSuffix(fileName);
     const writeFile = `${chunkDir}${suffix}`;
     chunkPaths.sort((a, b) => parseInt(a.split('-')[1]) - parseInt(b.split('-')[1]));
+    const size = 1024 * 1024 * 2;
     await Promise.all(
-      chunkPaths.map(chunkPath =>
+      chunkPaths.map((chunkPath, index) =>
         pipeStream(
           resolve(chunkDir, chunkPath),
           // 指定位置创建可写流
-          createWriteStream(writeFile),
+          createWriteStream(writeFile, {
+            start: index * size
+          }),
         ),
       ),
     );
