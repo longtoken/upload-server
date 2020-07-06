@@ -14,15 +14,15 @@ interface CheckRes {
  */
 export default class FileController extends Controller {
   public async list() {
-    const { ctx } = this;
+    const { ctx, service } = this;
     const { fileName, fileMd5Val }: QueryParams = ctx.query;
     const fileSuffix: string = ctx.helper.getSuffix(fileName);
-    const fileInfo = ctx.service.file.getFileInfo(fileMd5Val, fileSuffix);
+    const fileInfo = service.file.getFileInfo(fileMd5Val, fileSuffix);
     const checkResponse: CheckRes = { hash: fileMd5Val };
     if (fileInfo.isFileExist) {
       checkResponse.fileExist = true;
     } else {
-      const fileList = await ctx.service.file.getFileList(fileMd5Val);
+      const fileList = await service.file.getFileList(fileMd5Val);
       checkResponse.chunkList = fileList;
       checkResponse.fileExist = false;
     }
@@ -39,4 +39,5 @@ export default class FileController extends Controller {
     ctx.body = { message: 'merge success', hash: ctx.query.fileHash };
   }
 }
+
 

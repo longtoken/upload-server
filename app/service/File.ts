@@ -34,7 +34,7 @@ export default class File extends Service {
     }
     return result;
   }
-  handleUpload(req: IncomingMessage) {
+  handleUpload(req: IncomingMessage): Promise<{ message: string }> {
     return new Promise(res => {
       const form = new IncomingForm();
       form.parse(req, async (err, fields, file) => {

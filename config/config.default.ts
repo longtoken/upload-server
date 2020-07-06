@@ -15,7 +15,7 @@ export default (appInfo: EggAppInfo) => {
   // custom
   config.TIMEOUT_MS = 2592000000;//30天
   config.uploadsPath = resolve(__dirname, '../app/public/uploads');
-
+  config.API = '/api';
   // cors
   config.security = {
     csrf: {
