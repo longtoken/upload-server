@@ -87,7 +87,7 @@ if (this.handleUploaded(uploadedFileInfo.fileExist) && uploadedFileInfo.chunkLis
 
 ### 后端
 后端主要的工作是针对文件的操作，比如使用fs-extra模块获取文件信息、使用formidable模块解析上传的文件等。<br>
-说下大致编写过程，在egg项目中的app目录里面找到router.ts文件定义路由，定义路由需要传入controller方法，controller方法主要对请求参数进行处理，调用service 方法处理业务，然后返回结果。<br>
+大致编写过程：在egg项目中的app目录里面找到router.ts文件定义路由，定义路由需要传入controller方法。所以我们接着编写controller方法，而该方法主要对请求参数进行处理，调用service方法处理业务，然后返回结果。主要是router、controller、service三个部分。<br>
 + 环境搭建<br>
 egg文档蛮全的，可以直接参考egg的文档。这里就简单说下搭建步骤。[egg文档](https://eggjs.org/zh-cn/)<br>
 首先执行`npm init egg --type=ts`安装egg项目，然后找到router.ts文件定义一些路由，比如处理上传的接口`router.post('api/uploadChunk', controller.file.upload);`接着分别在controller目录跟service目录下创建对应文件，比如`cd app/controller/ && touch file.ts`；最后在对应的文件编写具体业务。
