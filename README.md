@@ -6,10 +6,10 @@
 该功能实现流程是先把上传的文件进行切割，然后把切割之后的文件块发送到服务端，发送完毕之后通知服务端组合文件块。<br>
 其中暂停上传功能就是前端取消掉文件块的上传请求，恢复上传则是把未上传的文件块重新上传。需要前后端配合完成。
 ### 前端
-   前端主要分为：切割文件、获取文件MD5、上传切割后的文件块、合并文件、暂停和恢复上传等功能。
-+ 切割文件：这个功能点在整个断点续传中属于比较重要的一环，这里仔细说明下。我们用ajax上传一个大文件用的时间会比较长，在上传途中如果取消掉请求，那在下一次上传时又要重新上传整个文件。而通过把大文件分解成若干个文件块去上传，这样在上传中取消请求，下一次上传就只需要上传其他没上传成功的文件块(不用传整个文件)。
+   前端主要分为：切割文件、获取文件MD5值、上传切割后的文件块、合并文件、暂停和恢复上传等功能。
++ 切割文件：这个功能点在整个断点续传中属于比较重要的一环，这里仔细说明下。我们用ajax上传一个大文件用的时间会比较长，在上传途中如果取消掉请求，那在下一次上传时又要重新上传整个文件。而通过把大文件分解成若干个文件块去上传，这样在上传中取消请求，已经上传的文件块会保存到服务端，下一次上传就只需要上传其他没上传成功的文件块(不用传整个文件)。
 
-这里把文件块放入一个fileChunkList数组，方便后面去获取文件的MD5、上传文件块等。
+这里把文件块放入一个fileChunkList数组，方便后面去获取文件的MD5值、上传文件块等。
 ```
 // 使用HTML5的file.slice对文件进行切割，file.slice方法返回Blob对象
 let start = 0;
@@ -19,9 +19,9 @@ while (start < file.size) {
 }
 ```
 
-+ 获取文件MD5：我们不能通过文件名来判断服务端是否存在上传的文件，因为用户上传的文件很可能会有重名的情况。所以应该通过文件内容来区分，这样就需要获取文件的MD5。<br>
++ 获取文件MD5值：我们不能通过文件名来判断服务端是否存在上传的文件，因为用户上传的文件很可能会有重名的情况。所以应该通过文件内容来区分，这样就需要获取文件的MD5值。<br>
 
-使用spark-md5模块获取文件的md5。模块详情点击[这里](http)
+使用spark-md5模块获取文件的MD5值。模块详情点击[这里](http)
 ```
 // 部分代码展示
 let spark = new SparkMD5.ArrayBuffer();
@@ -86,8 +86,8 @@ if (this.handleUploaded(uploadedFileInfo.fileExist) && uploadedFileInfo.chunkLis
 ```
 
 ### 后端
-先说下大致编写过程，在egg项目中的app目录里面找到router.ts文件定义路由，定义路由需要传入controller方法，controller方法主要对请求参数进行处理，调用service 方法处理业务，然后返回结果。<br>
-主要的功能是对针对文件的操作，比如使用fs-extra模块获取文件信息、使用formidable模块解析上传的文件等。
+后端主要的工作是针对文件的操作，比如使用fs-extra模块获取文件信息、使用formidable模块解析上传的文件等。<br>
+说下大致编写过程，在egg项目中的app目录里面找到router.ts文件定义路由，定义路由需要传入controller方法，controller方法主要对请求参数进行处理，调用service 方法处理业务，然后返回结果。<br>
 + 环境搭建<br>
 egg文档蛮全的，可以直接参考egg的文档。这里就简单说下搭建步骤。[egg文档](https://eggjs.org/zh-cn/)<br>
 首先执行`npm init egg --type=ts`安装egg项目，然后找到router.ts文件定义一些路由，比如处理上传的接口`router.post('api/uploadChunk', controller.file.upload);`接着分别在controller目录跟service目录下创建对应文件，比如`cd app/controller/ && touch file.ts`；最后在对应的文件编写具体业务。
@@ -105,7 +105,7 @@ egg文档蛮全的，可以直接参考egg的文档。这里就简单说下搭�
     }
     ctx.body = checkResponse;
     ```
-   + uploadChunk接口：使用formidable模块解析上传的文件块，把上传的文件块统一放到一个目录，用文件的md5给目录命名。
+   + uploadChunk接口：使用formidable模块解析上传的文件块，把上传的文件块统一放到一个目录，用文件的MD5值给目录命名。
     ```
     import { IncomingForm } from 'formidable';
     const form = new IncomingForm();
@@ -120,7 +120,7 @@ egg文档蛮全的，可以直接参考egg的文档。这里就简单说下搭�
         move(file.chunk.path, resolve(`${chunkFolder}/${md5AndFileNo}`));
     });
     ```
-   + mergeChunk接口：通过文件md5，把对应目录里面的文件块用createReadStream跟createWriteStream组合成一个文件。最后在文件组合完成之后删除文件块目录。
+   + mergeChunk接口：通过文件MD5值，把对应目录里面的文件块用createReadStream跟createWriteStream组合成一个文件。最后在文件组合完成之后删除文件块目录。
     ```
     const readStream = createReadStream(path);
     readStream.on('end', () => {
@@ -151,7 +151,7 @@ egg文档蛮全的，可以直接参考egg的文档。这里就简单说下搭�
 ### 代码地址
 [前端代码](https://github.com/longtoken/upload-front)
 [后端代码](https://github.com/longtoken/upload-server)
-### 总结
-关于断点续传，这里的代码只是一个基础功能实现，仅供参考。具体需求需要具体分析啦。
+### 最后
+如果理解了整个断点续传的原理，具体的代码编写就比较容易了，可以按照自己的项目需求定制。本文提供的代码只是基础实现，仅供大家参考。
 
 
