@@ -1,4 +1,4 @@
-# egg断点续传
+# 使用React+EggJs实现断点续传
 ### 技术栈
 前端用了React，后端则是EggJs，都用了TypeScript编写。
 ### 断点续传实现原理
